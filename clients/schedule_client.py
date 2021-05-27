@@ -5,18 +5,18 @@ from serializers.schedule_serializer import ScheduleSerializer
 
 
 class ScheduleClient:
-    def __init__(self):
+    def __init__(self, path=None):
         self.domain = f'https://www.espn.com/nfl/schedule/'
-        self.one_week_schedule = []
+        self.path = path
+        self.schedule = []
 
-    def set_one_week_schedule(self):
+    def get_schedule(self):
         response = requests.get(self.get_url())
         soup = BeautifulSoup(response.text, 'lxml')
         self.parse_soup(soup)
-        return ScheduleSerializer(self.one_week_schedule).serialize()
 
-    def get_url(self, path=None):
-        return f"{self.domain}/{path}" if path else self.domain
+    def get_url(self):
+        return f"{self.domain}/{self.path}" if self.path else self.domain
 
     def parse_soup(self, soup):
         tables = soup.find_all('table', class_="schedule")
@@ -35,4 +35,4 @@ class ScheduleClient:
                         if date:
                             row_items.append(date)
                 if len(row_items):
-                    self.one_week_schedule.append(row_items)
+                    self.schedule.append(row_items)
