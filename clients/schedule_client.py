@@ -1,14 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
 from serializers.schedule_serializer import ScheduleSerializer
 
 
 class ScheduleClient:
-    def __init__(self, path=None):
-        self.domain = f'https://www.espn.com/nfl/schedule/'
-        self.path = path
+    def __init__(self, id):
+        self.domain = f'https://www.espn.com/nfl/schedule'
         self.schedule = []
+        self.id = id
 
     def get_schedule(self):
         response = requests.get(self.get_url())
@@ -16,7 +15,7 @@ class ScheduleClient:
         self.parse_soup(soup)
 
     def get_url(self):
-        return f"{self.domain}/{self.path}" if self.path else self.domain
+        return f"{self.domain}" if self.id == 1 else f"{self.domain}/_/week/{self.id}"
 
     def parse_soup(self, soup):
         tables = soup.find_all('table', class_="schedule")
