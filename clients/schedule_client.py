@@ -6,18 +6,16 @@ from serializers.schedule_serializer import ScheduleSerializer
 class ScheduleClient:
     def __init__(self, id):
         self.domain = f'https://www.espn.com/nfl/schedule'
-        self.schedule = []
         self.id = id
 
     def get_schedule(self):
         response = requests.get(self.get_url())
-        soup = BeautifulSoup(response.text, 'lxml')
-        self.parse_soup(soup)
+        self.parse(BeautifulSoup(response.text, 'lxml'))
 
     def get_url(self):
         return f"{self.domain}" if self.id == 1 else f"{self.domain}/_/week/{self.id}"
 
-    def parse_soup(self, soup):
+    def parse(self, soup):
         tables = soup.find_all('table', class_="schedule")
         for table in tables:
             rows = table.find_all('tr')
